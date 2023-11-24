@@ -21,3 +21,4 @@ const authenticated=(role)=>{
         }
     }
 }
+module.exports=authenticated;
