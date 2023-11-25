@@ -66,7 +66,7 @@ const deleteUser = async (req, res) => {
         const resultat = await Users.findByIdAndDelete({ _id });
         if (!resultat) throw Error("An error occured");
         res.status(200).json({ message: "One of users deleted successfully" });
-        //I gess we need to delete the user from the user info collection ?
+        //I guess we need to delete the user from the user info collection ?
     } catch (error) {
         res.status(500).json({ message: "An error occured during deleting a user", error: error.message })
     }
