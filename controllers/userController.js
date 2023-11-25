@@ -29,7 +29,7 @@ const register = async (req, res) => {
     }
 }
 const login = async (req, res) => {
-    const { email, password } = req.bod;
+    const { email, password } = req.body;
     try {
         if (!email || !password) throw Error("All fields must be filled");
         const exist = await Users.findOne({ email });
@@ -45,7 +45,7 @@ const login = async (req, res) => {
 const findOne = async (req, res) => {
     const { Id} = req.params;
     try {
-        if (Id) throw Error("No id detected to continue");
+        if (!Id) throw Error("No id detected to continue");
         const user = await Users.findById({ _id:Id });
         if (!user) throw Error("An error occured");
         res.status(200).json({ message: "Selecting a user successfully", user });
@@ -119,7 +119,7 @@ const findByRole=async(req,res)=>{
     try {
         if(!role)throw Error("no role specified");
         const users=await Users.find({role});
-        if(!users)throw Error(`Error while getting users by role ${role}`)
+        if(!users || users.length==0)throw Error(`Error while getting users by role ${role}`)
         res.status(200).json({message:`users with role ${role} retrieved successfully `,users})
     } catch (error) {
         res.status(404).json({message:'no users by this role',error:error.message})

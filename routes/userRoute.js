@@ -5,7 +5,7 @@ router.get('/getAll',userControllers.getAll);
 router.get('/findOneById/:Id',userControllers.findOne);
 router.get('/findByRole',userControllers.findByRole);
 router.post('/login',userControllers.login);
-router.post('/regiter',userControllers.register);
+router.post('/register',userControllers.register);
 router.delete('/deleteById/:Id',userControllers.deleteUser);
 router.put('/updateUser/:Id',userControllers.updateUser);
 router.put('/updatePassword/:Id',userControllers.updatePassword);
