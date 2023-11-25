@@ -35,6 +35,7 @@ const login = async (req, res) => {
         const exist = await Users.findOne({ email });
         if (!exist) throw Error("Not registered yet");
         const comparing = await bcrypt.compare(password, exist.password);
+        if(!comparing)throw Error("Passwords does not match");
         const token = generateToken(exist._id, exist.role);
         res.status(200).json({ message: "login successfully", token });
     } catch (error) {
@@ -42,10 +43,10 @@ const login = async (req, res) => {
     }
 }
 const findOne = async (req, res) => {
-    const { _id } = req.params;
+    const { Id} = req.params;
     try {
-        if (!_id) throw Error("No id detected to continue");
-        const user = await Users.findById({ _id });
+        if (Id) throw Error("No id detected to continue");
+        const user = await Users.findById({ _id:Id });
         if (!user) throw Error("An error occured");
         res.status(200).json({ message: "Selecting a user successfully", user });
     } catch (error) {
@@ -54,41 +55,42 @@ const findOne = async (req, res) => {
 }
 const getAll = async (req, res) => {
     try {
-        const users = await Users.find();
+        const users = await Users.find({});
         res.status(200).json({ message: "Selecing all users successfully", users });
     } catch (error) {
         res.status(500).json({ message: 'An error occured during selecting all users', error: error.message })
     }
 }
 const deleteUser = async (req, res) => {
-    const { _id } = req.params;
+    const { Id } = req.params;
     try {
-        const resultat = await Users.findByIdAndDelete({ _id });
+        if(!Id)throw Error("No id passed as parameter");
+        const resultat = await Users.findByIdAndDelete({ _id:Id });
         if (!resultat) throw Error("An error occured");
         res.status(200).json({ message: "One of users deleted successfully" });
-        //I guess we need to delete the user from the user info collection ?
     } catch (error) {
         res.status(500).json({ message: "An error occured during deleting a user", error: error.message })
     }
 }
 const updateUser = async (req, res) => {
     const { fullName, phoneNumber, email } = req.body;
-    const { _id } = req.params
+    const { Id } = req.params
     try {
         if (!fullName || !phoneNumber || !email) throw Error('All fields must be filled');
-        if (!_id) throw Error("No id sent as parameter");
-        const resultat = await Users.updateOne({ _id }, { fullName, phoneNumber, email });
-        res.status(200).json({ message: "Updating a user successfully" });
+        if (!Id) throw Error("No id sent as parameter");
+        const resultat = await Users.findByIdAndUpdate({ _id:Id }, { fullName, phoneNumber, email });
+        if(!resultat)throw Error("Error while updating");
+        res.status(200).json({ message: "Updating a user successfully" ,resultat});
     } catch (error) {
         res.status(500).json({ message: "Failed to update a user", error: error.message })
     }
 }
 const validPassword = async (req, res) => {
     const { password } = req.body;
-    const { _id } = req.params;
+    const { Id } = req.params;
     try {
-        if (!password || !_id) throw Error("Invalid input");
-        const exist = await Users.findById({ _id });
+        if (!password || !Id) throw Error("Invalid input");
+        const exist = await Users.findById({ _id:Id });
         if (!exist) throw Error("user not found");
         const valid = await bcrypt.compare(password, exist.password);
         if (!valid) throw Error("Wrong password");
@@ -100,15 +102,27 @@ const validPassword = async (req, res) => {
 }
 const updatePassword = async (req, res) => {
     const { password } = req.body;
-    const { _id } = req.params;
+    const { Id } = req.params;
     try {
+        if(!Id)throw Error("no id passed as parameter")
         if (!password) throw Error("Password field can not be empty")
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
-        const changePassword = await Users.updateOne({ _id }, { password: hashedPassword });
-        res.status(200).json({ message: "Your password updated successfully" })
+        const changePassword = await Users.findByIdAndUpdate({ _id:Id }, { password: hashedPassword });
+        res.status(200).json({ message: "Your password updated successfully" ,changePassword})
     } catch (error) {
-        res.status(200).json({ message: 'Failed to update the password' });
+        res.status(500).json({ message: 'Failed to update the password' });
     }
 }
-module.exports = { register, login, findOne, getAll, deleteUser, updateUser, updatePassword, validPassword };
+const findByRole=async(req,res)=>{
+    const {role}= req.body;
+    try {
+        if(!role)throw Error("no role specified");
+        const users=await Users.find({role});
+        if(!users)throw Error(`Error while getting users by role ${role}`)
+        res.status(200).json({message:`users with role ${role} retrieved successfully `,users})
+    } catch (error) {
+        res.status(404).json({message:'no users by this role',error:error.message})
+    }
+}
+module.exports = {findByRole, register, login, findOne, getAll, deleteUser, updateUser, updatePassword, validPassword };
