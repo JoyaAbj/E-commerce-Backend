@@ -1,0 +1,6 @@
+#User Apis:
+-Register: http://localhost:5000/users/register
+-Login: http://localhost:5000/users/login
+-GetAll : http://localhost:5000/users/getAll
+-GetUserById: http://localhost:5000/users/findOneById/:Id
+-GetUsersByRole: http://localhost:5000/users/findByRole
