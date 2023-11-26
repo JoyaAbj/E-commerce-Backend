@@ -1,3 +1,7 @@
+### All Apis used in our backend:
+
+---------------------------------------------------------------------------------
+
 #User Apis:
 -Register: http://localhost:5000/users/register (post)
 -Login: http://localhost:5000/users/login (post)
@@ -9,6 +13,7 @@
 -UpdatePassword: http://localhost:5000/users/updatePassword/:Id (put)
 -ValidPassword: http://localhost:5000/users/isValidPassword/:Id (post)
 
+---------------------------------------------------------------------------------
 
 #Car Apis:
 -AddCar: http://localhost:5000/cars/addCar (post)
@@ -21,6 +26,7 @@
 -DeleteCar: http://localhost:5000/cars/deleteCar/:Id (delete)
 -UpdateCar: http://localhost:5000/cars/updateCar/:Id (put)
 
+---------------------------------------------------------------------------------
 
 #Order Apis:
 -AddOrder: http://localhost:5000/orders/add (post)
@@ -30,6 +36,7 @@
 -UpdateStatus: http://localhost:5000/orders/updateStatus/:Id (put)
 -UpdateOrder: http://localhost:5000/orders/updateOrder/:Id (put)
 
+---------------------------------------------------------------------------------
 
 #Shipment Apis:
 -AddShipment: http://localhost:5000/shipments/add (post)
@@ -38,4 +45,12 @@
 -DeleteOne: http://localhost:5000/shipments/deleteOne/:Id (delete)
 -UpdateOne: http://localhost:5000/shipments/updateOne/:Id (put)
 
+---------------------------------------------------------------------------------
 
+#Review Apis:
+-AddReview: http://localhost:5000/reviews/add (post)
+-GetReviewById: http://localhost:5000/reviews/getReviewById/:Id (get)
+-GetAll: http://localhost:5000/reviews/getAll (get)
+-UpdateOne: http://localhost:5000/reviews/updateReviewById/:Id (put)
+-GetReviewByEmail: http://localhost:5000/reviews/getReviewByEmail (get)
+-DeleteReviewById: http://localhost:5000/reviews/deleteReviewById/:Id (delete)

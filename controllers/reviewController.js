@@ -22,7 +22,7 @@ const getAll=async(req,res)=>{
 const getReviewById=async(req,res)=>{
     const {Id}=req.params
     try{
-        if(!Id)throw Error("No id passed as parameter")
+        if(!req.params)throw Error("No id passed as parameter")
         const get=await Review.findOne({_id:Id});
         if(!get)throw Error("An error occured while getting a review");
         res.status(200).json({message:"Getting a review successfully",get});
