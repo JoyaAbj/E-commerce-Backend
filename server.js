@@ -3,7 +3,8 @@ const connection = require('./config/connection');
 const userRoute=require('./routes/userRoute');
 const carRoute=require('./routes/carRoute');
 const shipmentRoute=require('./routes/shipmentRoute');
-const userInfoRoute= require("./routes/userInfoRoute")
+const userInfoRoute= require("./routes/userInfoRoute");
+const orderRoute=require("./routes/orderRoute");
 const express=require('express');
 const app=express();
 const cors=require('cors');
@@ -14,6 +15,7 @@ app.use('/users',userRoute);
 app.use('/cars',carRoute);
 app.use('/shipments',shipmentRoute);
 app.use('/userInfo',userInfoRoute);
+app.use('/orders',orderRoute);
 app.listen(process.env.PORT,()=>{
     connection.checkConnection();
     console.log(`server is running on port:${process.env.PORT}`)

@@ -16,21 +16,22 @@ const addCar = async (req, res) => {
     color,
   } = req.body;
   try {
-    if (
-      !carName ||
-      !company ||
-      !type ||
-      !description ||
-      !initialPrice ||
-      !sellingPrice ||
-      !TVA ||
-      !discount ||
-      !quantity ||
-      !image ||
-      !DOR ||
-      !color
-    )
-      throw Error("All fields must be filled !");
+
+    // if (
+    //   !carName ||
+    //   !company ||
+    //   !type ||
+    //   !description ||
+    //   !initialPrice ||
+    //   !sellingPrice ||
+    //   !TVA ||
+    //   !discount ||
+    //   !quantity ||
+    //   !image ||
+    //   !DOR ||
+    //   !color
+    // )
+    //   throw Error("All fields must be filled !");
     const car = await Cars.create({
       carName,
       company,
@@ -46,7 +47,7 @@ const addCar = async (req, res) => {
       color,
     });
     if (!car) throw Error("An error occured during adding a new car ");
-    res.status(200).json({ message: "New Car added successfully" });
+    res.status(200).json({ message: "New Car added successfully" ,car});
   } catch (error) {
     res
       .status(500)
@@ -165,21 +166,21 @@ const updateCar = async (req, res) => {
   } = req.body;
   const { Id } = req.params;
   try {
-    if (
-      !carName ||
-      !company ||
-      !type ||
-      !description ||
-      !initialPrice ||
-      !sellingPrice ||
-      !TVA ||
-      !discount ||
-      !quantity ||
-      !image ||
-      !DOR ||
-      !color
-    )
-      throw Error("All fields must be filled !");
+    // if (
+    //   !carName ||
+    //   !company ||
+    //   !type ||
+    //   !description ||
+    //   !initialPrice ||
+    //   !sellingPrice ||
+    //   !TVA ||
+    //   !discount ||
+    //   !quantity ||
+    //   !image ||
+    //   !DOR ||
+    //   !color
+    // )
+    //   throw Error("All fields must be filled !");
     if (!Id) throw Error("No id sent as parameter");
     const updatedCar = await Cars.findByIdAndUpdate(
       { _id: Id },
@@ -198,7 +199,8 @@ const updateCar = async (req, res) => {
         color,
       }
     );
-    res.status(200).json({ message: "car updated successfully", updatedCar });
+    const car=await getACarById(Id);
+    res.status(200).json({ message: "car updated successfully", car });
   } catch (error) {
     res
       .status(500)
@@ -219,6 +221,16 @@ const deleteCar = async (req, res) => {
     });
   }
 };
+
+const getACarById = async(Id)=>{
+  try {
+    const car= await Cars.findById({_id:Id});
+    return car;
+  } catch (error) {
+    return error;
+  }
+}
+
 
 module.exports = {
   addCar,

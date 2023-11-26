@@ -80,7 +80,8 @@ const updateUser = async (req, res) => {
         if (!Id) throw Error("No id sent as parameter");
         const resultat = await Users.findByIdAndUpdate({ _id:Id }, { fullName, phoneNumber, email });
         if(!resultat)throw Error("Error while updating");
-        res.status(200).json({ message: "Updating a user successfully" ,resultat});
+        const user=await getUserById(Id);
+        res.status(200).json({ message: "Updating a user successfully" ,user});
     } catch (error) {
         res.status(500).json({ message: "Failed to update a user", error: error.message })
     }
@@ -109,7 +110,8 @@ const updatePassword = async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         const changePassword = await Users.findByIdAndUpdate({ _id:Id }, { password: hashedPassword });
-        res.status(200).json({ message: "Your password updated successfully" ,changePassword})
+        const user=await getUserById(Id);
+        res.status(200).json({ message: "Your password updated successfully" ,user})
     } catch (error) {
         res.status(500).json({ message: 'Failed to update the password' });
     }
@@ -125,4 +127,13 @@ const findByRole=async(req,res)=>{
         res.status(404).json({message:'no users by this role',error:error.message})
     }
 }
+
+const getUserById = async(Id)=>{
+    try {
+      const user= await Users.findById({_id:Id});
+      return user;
+    } catch (error) {
+      return error;
+    }
+  }
 module.exports = {findByRole, register, login, findOne, getAll, deleteUser, updateUser, updatePassword, validPassword };

@@ -49,9 +49,20 @@ const updateOne = async (req, res) => {
         if (!location || !duration) throw Error('All fields must be filled');
         const resultat = await Shipment.findOneAndUpdate({ _id: Id }, { location, duration });
         if (!resultat) throw Error('An error occured during updating one shipment');
-        res.status(200).json({ message: 'Updating one shipment successfully!', resultat })
+        const updatedShipment=await getshipId(Id);
+        res.status(200).json({ message: 'Updating one shipment successfully!', updatedShipment })
     } catch (error) {
         res.status(500).json({ message: 'Failed to update a shipment', error: error.message });
     }
 }
+
+const getshipId = async(Id)=>{
+    try {
+      const shipment= await Shipment.findById({_id:Id});
+      return shipment;
+    } catch (error) {
+      return error;
+    }
+  }
+
 module.exports = { add, getAll, getOneById, deleteOne, updateOne };
