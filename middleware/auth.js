@@ -15,7 +15,7 @@ const authenticated=(role)=>{
         try{
             const credentials=jwt.verify(token,process.env.SECRET_KEY);
             if(credentials.role!==role)throw Error("You are not authorized");
-            const exist=await Users.findById({_id:credentials.Id});
+            const exist=await Users.findById({_id:credentials.id});
             if(!exist)throw Error("User not found !!");
             next();
         }catch(error){
@@ -23,4 +23,4 @@ const authenticated=(role)=>{
         }
     }
 }
-module.exports=authenticated;
+module.exports={authenticated};

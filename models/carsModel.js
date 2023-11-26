@@ -1,3 +1,4 @@
+const { timeStamp } = require("console");
 const mongoose = require("mongoose");
 
 const carsSchema = new mongoose.Schema({
@@ -13,7 +14,7 @@ const carsSchema = new mongoose.Schema({
   image:{type:Array,required:true},
   DOR:{type:Date,required:true},
   color:{type:String, required:true}
-});
+},{ timestamps: true });
 
 const Cars = mongoose.model("cars", carsSchema);
 module.exports = Cars;

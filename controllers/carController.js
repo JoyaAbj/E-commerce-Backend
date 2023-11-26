@@ -231,8 +231,20 @@ const getACarById = async(Id)=>{
   }
 }
 
+const getAllCarsBySelector = async(req,res)=>{
+  const {selector} = req.body;
+  try {
+    const cars=await Cars.find({}).select(`${selector}`);
+    res.status(200).json({message:"cars retrieved successfully", cars})
+  } catch (error) {
+    res.status(500).json({message:"cars not retrieved successfully", error:error.message})
+  }
+}
+
+
 
 module.exports = {
+  getAllCarsBySelector,
   addCar,
   getCarById,
   getCarByName,
