@@ -5,7 +5,48 @@ const {
   getDownloadURL,
   uploadBytesResumable,
 } = require('firebase/storage');
-
+const storage = getStorage();
+const giveCurrentDateTime = () => {
+  const today = new Date();
+  const date =
+    today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+  const time =
+    today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+  const dateTime = date + ' ' + time;
+  return dateTime;
+};
+const FileUpload = async (file) => {
+  const dateTime = giveCurrentDateTime();
+  
+    const storageRef = ref(
+      storage,
+       `files/${file.originalname + '       ' + dateTime}`
+    );
+  
+    // Create file metadata including the content type
+    const metadata = {
+      contentType: file.mimetype,
+    };
+  
+    // Upload the file in the bucket storage
+    const snapshot = await uploadBytesResumable(
+      storageRef,
+      file.buffer,
+      metadata
+    );
+    //by using uploadBytesResumable we can control the progress of uploading like pause, resume, cancel
+  
+    // Grab the public url
+    const downloadURL = await getDownloadURL(snapshot.ref);
+  
+    console.log('File successfully uploaded.');
+    return {
+      message: 'file uploaded to firebase storage',
+      name: file.originalname,
+      type: file.mimetype,
+      downloadURL: downloadURL,
+    };
+  };
 const addCar = async (req, res) => {
   const imagee = await FileUpload(req.files.image[0]);
   const {
@@ -40,18 +81,7 @@ const addCar = async (req, res) => {
     //   throw Error("All fields must be filled !");
     const image= imagee.dowloadedURL;
     const car = await Cars.create({
-      carName,
-      company,
-      type,
-      description,
-      initialPrice,
-      sellingPrice,
-      TVA,
-      discount,
-      quantity,
       image,
-      DOR,
-      color,
     });
     if (!car) throw Error("An error occured during adding a new car ");
     res.status(200).json({ message: "New Car added successfully" ,car});
