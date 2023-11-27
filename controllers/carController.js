@@ -5,7 +5,9 @@ const {
   getDownloadURL,
   uploadBytesResumable,
 } = require('firebase/storage');
+
 const storage = getStorage();
+
 const giveCurrentDateTime = () => {
   const today = new Date();
   const date =
@@ -15,71 +17,51 @@ const giveCurrentDateTime = () => {
   const dateTime = date + ' ' + time;
   return dateTime;
 };
-const FileUpload = async (file) => {
-  const dateTime = giveCurrentDateTime();
-  
-    const storageRef = ref(
-      storage,
-       `files/${file.originalname + '       ' + dateTime}`
-    );
-  
-    // Create file metadata including the content type
-    const metadata = {
-      contentType: file.mimetype,
-    };
-  
-    // Upload the file in the bucket storage
-    const snapshot = await uploadBytesResumable(
-      storageRef,
-      file.buffer,
-      metadata
-    );
-    //by using uploadBytesResumable we can control the progress of uploading like pause, resume, cancel
-  
-    // Grab the public url
-    const downloadURL = await getDownloadURL(snapshot.ref);
-  
-    console.log('File successfully uploaded.');
-    return {
-      message: 'file uploaded to firebase storage',
-      name: file.originalname,
-      type: file.mimetype,
-      downloadURL: downloadURL,
-    };
-  };
-const addCar = async (req, res) => {
-  const imagee = await FileUpload(req.files.image[0]);
-  const {
-    carName,
-    company,
-    type,
-    description,
-    initialPrice,
-    sellingPrice,
-    TVA,
-    discount,
-    quantity,
-    DOR,
-    color,
-  } = req.body;
-  try {
 
-    // if (
-    //   !carName ||
-    //   !company ||
-    //   !type ||
-    //   !description ||
-    //   !initialPrice ||
-    //   !sellingPrice ||
-    //   !TVA ||
-    //   !discount ||
-    //   !quantity ||
-    //   !image ||
-    //   !DOR ||
-    //   !color
-    // )
-    //   throw Error("All fields must be filled !");
-    const image= imagee.downloadURL;
+const getACarById = async (Id) => {
+  try {
+    const car = await Cars.findById({ _id: Id });
+    return car;
+  } catch (error) {
+    return error;
+  }
+};
+
+const FileUpload = async (file) => {
+  if (!file.buffer) {
+    return { message: 'File buffer is undefined' };
+  }
+
+  const dateTime = giveCurrentDateTime();
+  console.log('File Object:', file);
+  const storageRef = ref(storage, `files/${file.originalname + ' ' + dateTime}`);
+
+  // Create file metadata including the content type
+  const metadata = {
+    contentType: file.mimetype,
+  };
+
+  // Upload the file in the bucket storage
+  const snapshot = await uploadBytesResumable(storageRef, file.buffer, metadata);
+
+  // Grab the public url
+  const downloadURL = await getDownloadURL(snapshot.ref);
+
+  console.log('File successfully uploaded.');
+  return {
+    message: 'file uploaded to firebase storage',
+    name: file.originalname,
+    type: file.mimetype,
+    downloadURL: downloadURL,
+  };
+};
+
+const addCar = async (req, res) => {
+  const { carName, company, type, description, initialPrice, sellingPrice, TVA, discount, quantity, DOR, color } = req.body;
+
+  try {
+    const uploadedFile = await FileUpload(req.files.image[0]);
+    const image = uploadedFile.downloadURL;
     const car = await Cars.create({
       carName,
       company,
@@ -94,12 +76,12 @@ const addCar = async (req, res) => {
       DOR,
       color,
     });
-    if (!car) throw Error("An error occured during adding a new car ");
-    res.status(200).json({ message: "New Car added successfully" ,car});
+
+    if (!car) throw Error("An error occurred during adding a new car");
+
+    res.status(200).json({ message: "New Car added successfully", car });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to add new car", error: error.message });
+    res.status(500).json({ message: "Failed to add new car", error: error.message });
   }
 };
 
@@ -267,16 +249,6 @@ const deleteCar = async (req, res) => {
     });
   }
 };
-
-const getACarById = async(Id)=>{
-  try {
-    const car= await Cars.findById({_id:Id});
-    return car;
-  } catch (error) {
-    return error;
-  }
-}
-
 const getAllCarsBySelector = async(req,res)=>{
   const {selector} = req.body;
   try {
@@ -286,9 +258,6 @@ const getAllCarsBySelector = async(req,res)=>{
     res.status(500).json({message:"cars not retrieved successfully", error:error.message})
   }
 }
-
-
-
 module.exports = {
   getAllCarsBySelector,
   addCar,
