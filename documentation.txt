@@ -1,0 +1,56 @@
+### All Apis used in our backend:
+
+---------------------------------------------------------------------------------
+
+#User Apis:
+-Register: http://localhost:5000/users/register (post)
+-Login: http://localhost:5000/users/login (post)
+-GetAll : http://localhost:5000/users/getAll (get)
+-GetUserById: http://localhost:5000/users/findOneById/:Id (get)
+-GetUsersByRole: http://localhost:5000/users/findByRole (get)
+-DeleteById: http://localhost:5000/users/deleteById/:Id (delete)
+-UpdateUser: http://localhost:5000/users/updateUser/:Id (put)
+-UpdatePassword: http://localhost:5000/users/updatePassword/:Id (put)
+-ValidPassword: http://localhost:5000/users/isValidPassword/:Id (post)
+
+---------------------------------------------------------------------------------
+
+#Car Apis:
+-AddCar: http://localhost:5000/cars/addCar (post)
+-GetAll : http://localhost:5000/cars/getAll (get)
+-GetCarById: http://localhost:5000/cars/getCarById/:Id (get)
+-GetCarByName: http://localhost:5000/cars/getCarByName (post)
+-GetCarsByCompany: http://localhost:5000/cars/getCarsByCompany (post)
+-GetCarsByColor: http://localhost:5000/cars/GetCarsByColor (post)
+-GetCarsByType: http://localhost:5000/cars/getCarsByType (post)
+-DeleteCar: http://localhost:5000/cars/deleteCar/:Id (delete)
+-UpdateCar: http://localhost:5000/cars/updateCar/:Id (put)
+
+---------------------------------------------------------------------------------
+
+#Order Apis:
+-AddOrder: http://localhost:5000/orders/add (post)
+-GetAll : http://localhost:5000/orders/getAll (get)
+-GetOrderById: http://localhost:5000/orders/getOrderById/:Id (get)
+-DeleteOrder: http://localhost:5000/orders/deleteOrder/:Id (delete)
+-UpdateStatus: http://localhost:5000/orders/updateStatus/:Id (put)
+-UpdateOrder: http://localhost:5000/orders/updateOrder/:Id (put)
+
+---------------------------------------------------------------------------------
+
+#Shipment Apis:
+-AddShipment: http://localhost:5000/shipments/add (post)
+-GetAll : http://localhost:5000/shipments/getAll (get)
+-GetOneById: http://localhost:5000/shipments/getOneById/:Id (get)
+-DeleteOne: http://localhost:5000/shipments/deleteOne/:Id (delete)
+-UpdateOne: http://localhost:5000/shipments/updateOne/:Id (put)
+
+---------------------------------------------------------------------------------
+
+#Review Apis:
+-AddReview: http://localhost:5000/reviews/add (post)
+-GetReviewById: http://localhost:5000/reviews/getReviewById/:Id (get)
+-GetAll: http://localhost:5000/reviews/getAll (get)
+-UpdateOne: http://localhost:5000/reviews/updateReviewById/:Id (put)
+-GetReviewByEmail: http://localhost:5000/reviews/getReviewByEmail (get)
+-DeleteReviewById: http://localhost:5000/reviews/deleteReviewById/:Id (delete)
