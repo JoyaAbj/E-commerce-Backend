@@ -81,7 +81,18 @@ const addCar = async (req, res) => {
     //   throw Error("All fields must be filled !");
     const image= imagee.dowloadedURL;
     const car = await Cars.create({
+      carName,
+      company,
+      type,
+      description,
+      initialPrice,
+      sellingPrice,
+      TVA,
+      discount,
+      quantity,
       image,
+      DOR,
+      color,
     });
     if (!car) throw Error("An error occured during adding a new car ");
     res.status(200).json({ message: "New Car added successfully" ,car});
