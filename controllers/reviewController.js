@@ -22,7 +22,6 @@ const getAll=async(req,res)=>{
 const getReviewById=async(req,res)=>{
     const {Id}=req.params
     try{
-        if(!req.params)throw Error("No id passed as parameter")
         const get=await Review.findOne({_id:Id});
         if(!get)throw Error("An error occured while getting a review");
         res.status(200).json({message:"Getting a review successfully",get});
@@ -44,7 +43,6 @@ const getReviewByEmail=async(req,res)=>{
 const deleteReviewById=async(req,res)=>{
     const {Id}=req.params
     try{
-        if(!Id)throw Error("No id passed as parameter")
         const deleteOne=await Review.findOneAndDelete({_id:Id});
         if(!deleteOne)throw Error("An error occured while deleting a review");
         res.status(200).json({message:"Deleting a review successfully"});
@@ -56,7 +54,6 @@ const updateReviewById=async(req,res)=>{
     const {Id}=req.params;
     const  {fullName, Email,comment,rating}=req.body;
     try{
-        if(!Id)throw Error("No id passed as parameter");
         if(!fullName||!Email ||!comment || !rating)throw Error("All fields must be filled");
         const updateOne=await Review.findOneAndUpdate({_id:Id},{fullName, Email,comment,rating});
         if(!updateOne)throw Error("An error occured while updating a review");

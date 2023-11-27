@@ -58,7 +58,6 @@ const addCar = async (req, res) => {
 const getCarById = async (req, res) => {
   const { Id } = req.params;
   try {
-    if (!Id) throw Error("No id detected to continue");
     const car = await Cars.findById({ _id: Id });
     if (!car) throw Error("An error occured while getting the car");
     res.status(200).json({ message: "Car got successfully", car });
@@ -181,7 +180,6 @@ const updateCar = async (req, res) => {
     //   !color
     // )
     //   throw Error("All fields must be filled !");
-    if (!Id) throw Error("No id sent as parameter");
     const updatedCar = await Cars.findByIdAndUpdate(
       { _id: Id },
       {

@@ -36,7 +36,6 @@ const getAll = async (_, res) => {
 const findByUserId = async (req, res) => {
   const { Id } = req.params;
   try {
-    if (!Id) throw Error("No id passed as parameter !");
     const resultat = await Order.find({ userId: Id });
     if (!resultat)
       throw Error("An error occured while selecting  orders by userId");
@@ -52,7 +51,6 @@ const findByUserId = async (req, res) => {
 const updateOrderToDoneById = async(req,res)=>{
   const {Id} = req.params;
   try {
-    if(!Id) throw Error("no Id passed as parameter");
     const updatedOrder = await Order.findByIdAndUpdate({_id:Id},{status:true});
     if(!updatedOrder) throw Error("error while updating order");
     const result=await getOrderById(Id);
@@ -66,7 +64,6 @@ const updateOrderById = async(req,res)=>{
   const {Id} = req.params;
   const {cars,shipmentId}= req.body;
   try {
-    if(!Id) throw Error("no Id passed as parameter");
     const updatedOrder = await Order.findByIdAndUpdate({_id:Id},{cars,shipmentId});
     if(!updatedOrder) throw Error("error while updating order");
     const result=await getOrderById(Id);
@@ -79,7 +76,6 @@ const updateOrderById = async(req,res)=>{
 const deleteOrder = async (req, res) => {
   const { Id } = req.params;
   try {
-      if(!Id)throw Error("No id passed as parameter");
       const deletedOrder = await Order.findByIdAndDelete({ _id:Id });
       if (!deletedOrder) throw Error("An error occured");
       res.status(200).json({ message: "Order deleted successfully" ,deletedOrder});
@@ -87,6 +83,7 @@ const deleteOrder = async (req, res) => {
       res.status(500).json({ message: "An error occured during deleting order", error: error.message })
   }
 }
+
 
 const getOrderById = async(Id)=>{
   try {

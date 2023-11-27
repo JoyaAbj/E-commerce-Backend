@@ -1,16 +1,24 @@
 const UserInfo = require("../models/userInfoModel");
+const bcrypt = require("bcrypt");
+
+const hashCredential =async(credential)=>{
+  return await bcrypt.hash(credential , 10);
+}
+
 
 const addCardInfo = async (req, res) => {
-  const { userId, location, nameOnCard, cardNumber, cvv, expDate } = req.body;
+  const { userId,nameOnCard, cardNumber, cvv, expDate } = req.body;
   try {
     if (!userId || !location || !nameOnCard || !cardNumber || !cvv || !expDate)
       throw Error("All fields must be filled");
+    const hashednameOnCard=hashCredential(nameOnCard);
+    const hashedcardNumber=hashCredential(cardNumber);
+    const hashedcvv=hashCredential(cvv);  
     const card = await UserInfo.create({
       userId,
-      location,
-      nameOnCard,
-      cardNumber,
-      cvv,
+      hashednameOnCard,
+      hashedcardNumber,
+      hashedcvv,
       expDate,
     });
     if (!card) throw Error("error while adding card info");
@@ -24,8 +32,7 @@ const addCardInfo = async (req, res) => {
 const getCardInfoByUserId = async (req, res) => {
   const { Id } = req.params;
   try {
-    if (!Id) throw Error("no id passed as parameter ");
-    const card = await UserInfo.findOne({ userId: Id });
+    const card = await UserInfo.find({ userId: Id });
     if (!card) throw Error("error while getting card info");
     res.status(200).json({ message: "card info retrieved successfully", card });
   } catch (error) {
@@ -37,14 +44,16 @@ const getCardInfoByUserId = async (req, res) => {
 
 const updateCardInfo = async (req, res) => {
   const { Id } = req.params;
-  const { location, nameOnCard, cardNumber, cvv, expDate } = req.body;
+  const {nameOnCard, cardNumber, cvv, expDate } = req.body;
   try {
-    if (!Id) throw Error("no id passed as parameter");
-    if (!location || !nameOnCard || !cardNumber || !cvv || !expDate)
+    if (!nameOnCard || !cardNumber || !cvv || !expDate)
       throw Error("All fields must be filled");
+      const hashednameOnCard=hashCredential(nameOnCard);
+      const hashedcardNumber=hashCredential(cardNumber);
+      const hashedcvv=hashCredential(cvv); 
     const updatedCard = await UserInfo.findOneAndUpdate(
       { userId: Id },
-      { location, nameOnCard, cardNumber, cvv, expDate }
+      { hashednameOnCard, hashedcardNumber, hashedcvv, expDate }
     );
     if (!updatedCard) throw Error("error while updating card info");
     res

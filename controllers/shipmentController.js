@@ -22,7 +22,6 @@ const getAll = async (req, res) => {
 const getOneById = async (req, res) => {
     const { Id } = req.params;
     try {
-        if (!Id) throw Error('No id passed as parameter');
         const resultat = await Shipment.findOne({ _id: Id });
         if (!resultat) throw Error('An error occured during selecting one shipment by id from shipment colleciton!');
         res.status(200).json({ message: 'Getting one shipment successfully!', resultat })
@@ -33,7 +32,6 @@ const getOneById = async (req, res) => {
 const deleteOne = async (req, res) => {
     const { Id } = req.params;
     try {
-        if (!Id) throw Error('No id passed as parameter');
         const resultat = await Shipment.findOneAndDelete({ _id: Id });
         if (!resultat) throw Error('An error occured during deteting one shipment by id from shipment colleciton!');
         res.status(200).json({ message: 'Deleting one shipment successfully!' })
@@ -45,7 +43,6 @@ const updateOne = async (req, res) => {
     const { Id } = req.params;
     const { location, duration } = req.body;
     try {
-        if (!Id) throw Error('No id passed as parameter');
         if (!location || !duration) throw Error('All fields must be filled');
         const resultat = await Shipment.findOneAndUpdate({ _id: Id }, { location, duration });
         if (!resultat) throw Error('An error occured during updating one shipment');
