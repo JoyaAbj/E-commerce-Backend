@@ -79,7 +79,7 @@ const addCar = async (req, res) => {
     //   !color
     // )
     //   throw Error("All fields must be filled !");
-    const image= imagee.dowloadURL;
+    const image= imagee.downloadURL;
     const car = await Cars.create({
       carName,
       company,
