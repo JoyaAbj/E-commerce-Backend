@@ -4,7 +4,7 @@ const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 const carControllers=require('../controllers/carController');
 const {authenticated}=require('../middleware/auth.js');
-router.post('/addCar',upload.fields({ name: 'image' }),carControllers.addCar);
+router.post('/addCar',upload.fields([{ name: 'image' }]),carControllers.addCar);
 router.get('/getCarById/:Id',carControllers.getCarById);
 router.get('/getAll',carControllers.getAllCars);
 router.post('/getAllCarsBySelector',carControllers.getAllCarsBySelector);
