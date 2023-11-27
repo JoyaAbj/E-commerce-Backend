@@ -1,6 +1,13 @@
 const Cars = require("../models/carsModel");
+const {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytesResumable,
+} = require('firebase/storage');
 
 const addCar = async (req, res) => {
+  const imagee = await FileUpload(req.files.image[0]);
   const {
     carName,
     company,
@@ -11,7 +18,6 @@ const addCar = async (req, res) => {
     TVA,
     discount,
     quantity,
-    image,
     DOR,
     color,
   } = req.body;
@@ -32,6 +38,7 @@ const addCar = async (req, res) => {
     //   !color
     // )
     //   throw Error("All fields must be filled !");
+    const image= imagee.dowloadedURL;
     const car = await Cars.create({
       carName,
       company,
