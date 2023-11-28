@@ -1,4 +1,7 @@
 require('dotenv').config();
+const { initializeApp } = require('firebase/app');
+const firebaseConfig = require('./config/firebase');
+initializeApp(firebaseConfig);
 const connection = require('./config/connection');
 const userRoute=require('./routes/userRoute');
 const carRoute=require('./routes/carRoute');
