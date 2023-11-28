@@ -79,8 +79,10 @@ const addCar = async (req, res) => {
   } = req.body;
 
   try {
-    const uploadedFile = await FileUpload(req.files.image[0]);
-    const image = uploadedFile.downloadURL;
+    //const uploadedImage = await FileUpload(req.files.image[0]);
+    const fileUpload = await FileUpload(req.files.file[0]); 
+    const file=fileUpload.downloadURL;
+   // const image = uploadedImage.downloadURL;
     const car = await Cars.create({
       carName,
       company,
@@ -91,7 +93,7 @@ const addCar = async (req, res) => {
       TVA,
       discount,
       quantity,
-      image,
+      file,
       DOR,
       color,
     });
@@ -217,14 +219,14 @@ const updateCar = async (req, res) => {
  
   try {
     const car = await getACarById(Id);
-    const newImage = req.files.image[0];
+    const newFile = req.files.file[0];
  
-    let image = car.image;
+    let file = car.file;
  
-    
-    if (car.image !== newImage) {
-      const uploadedFile = await FileUpload(newImage);
-      image = uploadedFile.downloadURL;
+   
+    if (car.file !== newFile) {
+      const fileUpload = await FileUpload(req.files.file[0]); 
+      const file=fileUpload.downloadURL;
     }
  
     const updatedCar = await Cars.findByIdAndUpdate(
@@ -239,7 +241,7 @@ const updateCar = async (req, res) => {
         TVA,
         discount,
         quantity,
-        image,
+        file,
         DOR,
         color,
       }
