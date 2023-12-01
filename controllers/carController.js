@@ -82,6 +82,7 @@ const addCar = async (req, res) => {
     //const uploadedImage = await FileUpload(req.files.image[0]);
     const fileUpload = await FileUpload(req.files.file[0]); 
     const file=fileUpload.downloadURL;
+    
    // const image = uploadedImage.downloadURL;
     const car = await Cars.create({
       carName,
@@ -96,6 +97,7 @@ const addCar = async (req, res) => {
       file,
       DOR,
       color,
+
     });
 
     if (!car) throw Error("An error occurred during adding a new car");
