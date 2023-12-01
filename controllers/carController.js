@@ -82,6 +82,8 @@ const addCar = async (req, res) => {
     //const uploadedImage = await FileUpload(req.files.image[0]);
     const fileUpload = await FileUpload(req.files.file[0]); 
     const file=fileUpload.downloadURL;
+    const soundUpload = await FileUpload(req.files.file[0]);
+    const sound=soundUpload.downloadURL;
    // const image = uploadedImage.downloadURL;
     const car = await Cars.create({
       carName,
@@ -94,6 +96,7 @@ const addCar = async (req, res) => {
       discount,
       quantity,
       file,
+      sound,
       DOR,
       color,
     });
