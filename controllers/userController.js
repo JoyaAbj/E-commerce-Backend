@@ -23,7 +23,8 @@ const register = async (req, res) => {
         });
         if (!user) throw Error("An error occured during adding a user ");
         const token = generateToken(user._id, role);
-        res.status(200).json({ message: "Adding a user successfully", token });
+       // const users=await Users.find({});
+        res.status(200).json({ message: "Adding a user successfully",user});
     } catch (error) {
         res.status(500).json({ message: "Failed to add a user", error: error.message })
     }
@@ -67,7 +68,8 @@ const deleteUser = async (req, res) => {
         if(!Id)throw Error("No id passed as parameter");
         const resultat = await Users.findByIdAndDelete({ _id:Id });
         if (!resultat) throw Error("An error occured");
-        res.status(200).json({ message: "One of users deleted successfully" });
+        const users =await Users.find({});
+        res.status(200).json({ message: "One of users deleted successfully", users});
     } catch (error) {
         res.status(500).json({ message: "An error occured during deleting a user", error: error.message })
     }
