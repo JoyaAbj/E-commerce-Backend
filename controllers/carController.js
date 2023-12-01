@@ -4,51 +4,66 @@ const {
   ref,
   getDownloadURL,
   uploadBytesResumable,
-} = require('firebase/storage');
+} = require("firebase/storage");
+
 const storage = getStorage();
+
 const giveCurrentDateTime = () => {
   const today = new Date();
   const date =
-    today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
   const time =
-    today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
-  const dateTime = date + ' ' + time;
+    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+  const dateTime = date + " " + time;
   return dateTime;
 };
+
+const getACarById = async (Id) => {
+  try {
+    const car = await Cars.findById({ _id: Id });
+    return car;
+  } catch (error) {
+    return error;
+  }
+};
+
 const FileUpload = async (file) => {
+  if (!file.buffer) {
+    return { message: "File buffer is undefined" };
+  }
+
   const dateTime = giveCurrentDateTime();
-  
-    const storageRef = ref(
-      storage,
-       `files/${file.originalname + '       ' + dateTime}`
-    );
-  
-    // Create file metadata including the content type
-    const metadata = {
-      contentType: file.mimetype,
-    };
-  
-    // Upload the file in the bucket storage
-    const snapshot = await uploadBytesResumable(
-      storageRef,
-      file.buffer,
-      metadata
-    );
-    //by using uploadBytesResumable we can control the progress of uploading like pause, resume, cancel
-  
-    // Grab the public url
-    const downloadURL = await getDownloadURL(snapshot.ref);
-  
-    console.log('File successfully uploaded.');
-    return {
-      message: 'file uploaded to firebase storage',
-      name: file.originalname,
-      type: file.mimetype,
-      downloadURL: downloadURL,
-    };
+  console.log("File Object:", file);
+  const storageRef = ref(
+    storage,
+    `files/${file.originalname + " " + dateTime}`
+  );
+
+  // Create file metadata including the content type
+  const metadata = {
+    contentType: file.mimetype,
   };
+
+  // Upload the file in the bucket storage
+  const snapshot = await uploadBytesResumable(
+    storageRef,
+    file.buffer,
+    metadata
+  );
+
+  // Grab the public url
+  const downloadURL = await getDownloadURL(snapshot.ref);
+
+  console.log("File successfully uploaded.");
+  return {
+    message: "file uploaded to firebase storage",
+    name: file.originalname,
+    type: file.mimetype,
+    downloadURL: downloadURL,
+  };
+};
+
 const addCar = async (req, res) => {
-  const imagee = await FileUpload(req.files.image[0]);
   const {
     carName,
     company,
@@ -62,24 +77,12 @@ const addCar = async (req, res) => {
     DOR,
     color,
   } = req.body;
-  try {
 
-    // if (
-    //   !carName ||
-    //   !company ||
-    //   !type ||
-    //   !description ||
-    //   !initialPrice ||
-    //   !sellingPrice ||
-    //   !TVA ||
-    //   !discount ||
-    //   !quantity ||
-    //   !image ||
-    //   !DOR ||
-    //   !color
-    // )
-    //   throw Error("All fields must be filled !");
-    const image= imagee.downloadURL;
+  try {
+    //const uploadedImage = await FileUpload(req.files.image[0]);
+    const fileUpload = await FileUpload(req.files.file[0]); 
+    const file=fileUpload.downloadURL;
+   // const image = uploadedImage.downloadURL;
     const car = await Cars.create({
       carName,
       company,
@@ -90,12 +93,14 @@ const addCar = async (req, res) => {
       TVA,
       discount,
       quantity,
-      image,
+      file,
       DOR,
       color,
     });
-    if (!car) throw Error("An error occured during adding a new car ");
-    res.status(200).json({ message: "New Car added successfully" ,car});
+
+    if (!car) throw Error("An error occurred during adding a new car");
+
+    res.status(200).json({ message: "New Car added successfully", car });
   } catch (error) {
     res
       .status(500)
@@ -207,27 +212,23 @@ const updateCar = async (req, res) => {
     TVA,
     discount,
     quantity,
-    image,
     DOR,
     color,
   } = req.body;
   const { Id } = req.params;
+ 
   try {
-    // if (
-    //   !carName ||
-    //   !company ||
-    //   !type ||
-    //   !description ||
-    //   !initialPrice ||
-    //   !sellingPrice ||
-    //   !TVA ||
-    //   !discount ||
-    //   !quantity ||
-    //   !image ||
-    //   !DOR ||
-    //   !color
-    // )
-    //   throw Error("All fields must be filled !");
+    const car = await getACarById(Id);
+    const newFile = req.files.file[0];
+ 
+    let file = car.file;
+ 
+   
+    if (car.file !== newFile) {
+      const fileUpload = await FileUpload(req.files.file[0]); 
+      const file=fileUpload.downloadURL;
+    }
+ 
     const updatedCar = await Cars.findByIdAndUpdate(
       { _id: Id },
       {
@@ -240,19 +241,21 @@ const updateCar = async (req, res) => {
         TVA,
         discount,
         quantity,
-        image,
+        file,
         DOR,
         color,
       }
     );
-    const car=await getACarById(Id);
-    res.status(200).json({ message: "car updated successfully", car });
+ 
+    res.status(200).json({ message: "car updated successfully", car: updatedCar });
   } catch (error) {
     res
       .status(500)
       .json({ message: "Failed to update car", error: error.message });
   }
-};
+ };
+ 
+ 
 
 const deleteCar = async (req, res) => {
   const { Id } = req.params;
@@ -267,28 +270,20 @@ const deleteCar = async (req, res) => {
     });
   }
 };
-
-const getACarById = async(Id)=>{
+const getAllCarsBySelector = async (req, res) => {
+  const { selector } = req.body;
   try {
-    const car= await Cars.findById({_id:Id});
-    return car;
+    const cars = await Cars.find({}).select(`${selector}`);
+    res.status(200).json({ message: "cars retrieved successfully", cars });
   } catch (error) {
-    return error;
+    res
+      .status(500)
+      .json({
+        message: "cars not retrieved successfully",
+        error: error.message,
+      });
   }
-}
-
-const getAllCarsBySelector = async(req,res)=>{
-  const {selector} = req.body;
-  try {
-    const cars=await Cars.find({}).select(`${selector}`);
-    res.status(200).json({message:"cars retrieved successfully", cars})
-  } catch (error) {
-    res.status(500).json({message:"cars not retrieved successfully", error:error.message})
-  }
-}
-
-
-
+};
 module.exports = {
   getAllCarsBySelector,
   addCar,
