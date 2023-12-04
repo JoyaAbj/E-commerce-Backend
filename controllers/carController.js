@@ -31,29 +31,29 @@ const FileUpload = async (file) => {
   if (!file.buffer) {
     return { message: "File buffer is undefined" };
   }
-
+ 
   const dateTime = giveCurrentDateTime();
   console.log("File Object:", file);
   const storageRef = ref(
     storage,
     `files/${file.originalname + " " + dateTime}`
   );
-
+ 
   // Create file metadata including the content type
   const metadata = {
     contentType: file.mimetype,
   };
-
+ 
   // Upload the file in the bucket storage
   const snapshot = await uploadBytesResumable(
     storageRef,
     file.buffer,
     metadata
   );
-
+ 
   // Grab the public url
   const downloadURL = await getDownloadURL(snapshot.ref);
-
+ 
   console.log("File successfully uploaded.");
   return {
     message: "file uploaded to firebase storage",
@@ -61,52 +61,71 @@ const FileUpload = async (file) => {
     type: file.mimetype,
     downloadURL: downloadURL,
   };
+ };
+ 
+ 
+
+ const addCar = async (req, res) => {
+ const {
+   carName,
+   company,
+   type,
+   description,
+   initialPrice,
+   sellingPrice,
+   TVA,
+   discount,
+   quantity,
+   DOR,
+   color,
+ } = req.body;
+
+ try {
+   // Check if files were uploaded
+   if (!req.files) {
+     throw new Error('No files were uploaded');
+   }
+
+   // Check if Multer is configured correctly
+   if (!Array.isArray(req.files)) {
+     throw new Error('Multer is not configured correctly');
+   }
+
+   // Check if there was an error during the file upload
+   if (req.error) {
+     throw req.error;
+   }
+
+   const fileUploads = await Promise.all(req.files.map(file => FileUpload(file)));
+   const files = fileUploads.map(upload => upload.downloadURL);
+
+   const car = await Cars.create({
+     carName,
+     company,
+     type,
+     description,
+     initialPrice,
+     sellingPrice,
+     TVA,
+     discount,
+     quantity,
+     files,
+     DOR,
+     color,
+   });
+
+   if (!car) throw Error("An error occurred during adding a new car");
+
+   res.status(200).json({ message: "New Car added successfully", car });
+ } catch (error) {
+   res
+     .status(500)
+     .json({ message: "Failed to add new car", error: error.message });
+ }
 };
 
-const addCar = async (req, res) => {
-  const {
-    carName,
-    company,
-    type,
-    description,
-    initialPrice,
-    sellingPrice,
-    TVA,
-    discount,
-    quantity,
-    DOR,
-    color,
-  } = req.body;
-
-  try {
-    //const uploadedImage = await FileUpload(req.files.image[0]);
-    const fileUpload = await FileUpload(req.files.file[0]); 
-    const file=fileUpload.downloadURL;
-   // const image = uploadedImage.downloadURL;
-    const car = await Cars.create({
-      carName,
-      company,
-      type,
-      description,
-      initialPrice,
-      sellingPrice,
-      TVA,
-      discount,
-      quantity,
-      file,
-      DOR,
-      color,
-    });
-
-    if (!car) throw Error("An error occurred during adding a new car");
-
-    res.status(200).json({ message: "New Car added successfully", car });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to add new car", error: error.message });
-  }
-};
+ 
+ 
 
 const getCarById = async (req, res) => {
   const { Id } = req.params;
@@ -216,19 +235,18 @@ const updateCar = async (req, res) => {
     color,
   } = req.body;
   const { Id } = req.params;
- 
+  
   try {
     const car = await getACarById(Id);
-    const newFile = req.files.file[0];
+    const fileUploads = await Promise.all(req.files.map(file => FileUpload(file)));
+    const files = fileUploads.map(upload => upload.downloadURL);
  
-    let file = car.file;
- 
-   
-    if (car.file !== newFile) {
-      const fileUpload = await FileUpload(req.files.file[0]); 
-      const file=fileUpload.downloadURL;
-    }
- 
+  
+    //if (car.files !== files) {
+    // const fileUploads = await FileUpload(req.files); 
+     //files = fileUploads.map(upload => upload.downloadURL);
+   // }
+  
     const updatedCar = await Cars.findByIdAndUpdate(
       { _id: Id },
       {
@@ -241,21 +259,20 @@ const updateCar = async (req, res) => {
         TVA,
         discount,
         quantity,
-        file,
+        files,
         DOR,
         color,
       }
     );
- 
+  
     res.status(200).json({ message: "car updated successfully", car: updatedCar });
   } catch (error) {
     res
       .status(500)
       .json({ message: "Failed to update car", error: error.message });
   }
- };
- 
- 
+  };
+
 
 const deleteCar = async (req, res) => {
   const { Id } = req.params;
