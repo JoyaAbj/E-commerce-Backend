@@ -12,7 +12,7 @@ const carsSchema = new mongoose.Schema({
   discount:{type: Number},
   quantity:{type: Number,required:true},
   file:{type:Array,required:true}, // it could also be of type:String , Both cases tested
-  DOR:{type:Date,required:true},
+  DOR:{type:String,required:true},
   color:{type:String, required:true}
 },{ timestamps: true });
 
