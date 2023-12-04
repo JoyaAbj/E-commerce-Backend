@@ -113,6 +113,5 @@ const getNOrdersByMonth = async(req,res)=>{
     res.status(500).json({message:"Failed to fetch orders broup by the date",error:error.message})
   }
 }
-getNOrdersByMonth();
 
-module.exports = { add, getAll, findByUserId, updateOrderToDoneById , updateOrderById, deleteOrder};
+module.exports = { add,getNOrdersByMonth, getAll, findByUserId, updateOrderToDoneById , updateOrderById, deleteOrder};
