@@ -81,23 +81,22 @@ const FileUpload = async (file) => {
  } = req.body;
 
  try {
-   // Check if files were uploaded
+  const fileUploads = await Promise.all(req.files.map(file => FileUpload(file)));
+  const files = fileUploads.map(upload => upload.downloadURL);
    if (!req.files) {
-     throw new Error('No files were uploaded');
+     throw new Error('No files were uploadedd');
    }
 
-   // Check if Multer is configured correctly
+   
    if (!Array.isArray(req.files)) {
      throw new Error('Multer is not configured correctly');
    }
 
-   // Check if there was an error during the file upload
    if (req.error) {
      throw req.error;
    }
 
-   const fileUploads = await Promise.all(req.files.map(file => FileUpload(file)));
-   const files = fileUploads.map(upload => upload.downloadURL);
+   
 
    const car = await Cars.create({
      carName,

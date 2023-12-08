@@ -6,9 +6,9 @@ const generateToken = (id, role) => {
     return token;
 }
 const register = async (req, res) => {
-    const { fullName, phoneNumber, email, password, role } = req.body;
+    const { fullName, email, password, role } = req.body;
     try {
-        if (!fullName || !phoneNumber || !email || !password || !role)
+        if (!fullName || !email || !password || !role)
             throw Error("All fields must be filled !");
         const exist = await Users.findOne({ email });
         if (exist) throw Error("Email already in use");
@@ -16,7 +16,6 @@ const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
         const user = await Users.create({
             fullName: fullName,
-            phoneNumber: phoneNumber,
             email: email,
             password: hashedPassword,
             role: role
