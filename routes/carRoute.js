@@ -6,7 +6,6 @@ const carControllers = require('../controllers/carController');
 const { authenticated } = require('../middleware/auth.js');
 
 router.post('/addCar', upload.array('files'), carControllers.addCar);
-
 router.get('/getCarById/:Id', carControllers.getCarById);
 router.get('/getAll', carControllers.getAllCars);
 router.post('/getAllCarsBySelector', carControllers.getAllCarsBySelector);
