@@ -6,27 +6,39 @@ const generateToken = (id, role) => {
     return token;
 }
 const register = async (req, res) => {
-    const { fullName, email, password, role } = req.body;
+    const { fullName, email, password, phoneNumber, role } = req.body;
     try {
-        if (!fullName || !email || !password || !role)
-            throw Error("All fields must be filled !");
-        const exist = await Users.findOne({ email });
-        if (exist) throw Error("Email already in use");
+        if (!fullName || !email || !password || !phoneNumber || !role)
+            throw Error("All fields must be filled!");
+
+        const existEmail = await Users.findOne({ email });
+        if (existEmail) throw Error("Email already in use");
+
+        // Check if phoneNumber is provided and not null
+        if (!phoneNumber) throw Error("Phone number is required");
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
+
+        // Create a new user with a unique phoneNumber
         const user = await Users.create({
-            fullName: fullName,
-            email: email,
+            fullName,
+            email,
             password: hashedPassword,
-            role: role
+            phoneNumber,
+            role
         });
-        if (!user) throw Error("An error occured during adding a user ");
+
+        if (!user) throw Error("An error occurred during user creation");
+
         const token = generateToken(user._id, role);
-        res.status(200).json({ message: "Adding a user successfully", token });
+        res.status(200).json({ message: "User added successfully", token });
     } catch (error) {
-        res.status(500).json({ message: "Failed to add a user", error: error.message })
+        res.status(500).json({ message: "Failed to add ann user", error: error.message });
     }
-}
+};
+
+
 const login = async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -72,12 +84,12 @@ const deleteUser = async (req, res) => {
     }
 }
 const updateUser = async (req, res) => {
-    const { fullName, phoneNumber, email } = req.body;
+    const { fullName, ph, email } = req.body;
     const { Id } = req.params
     try {
-        if (!fullName || !phoneNumber || !email) throw Error('All fields must be filled');
+        if (!fullName || !ph || !email) throw Error('All fields must be filled');
         if (!Id) throw Error("No id sent as parameter");
-        const resultat = await Users.findByIdAndUpdate({ _id:Id }, { fullName, phoneNumber, email });
+        const resultat = await Users.findByIdAndUpdate({ _id:Id }, { fullName, ph, email });
         if(!resultat)throw Error("Error while updating");
         const user=await getUserById(Id);
         res.status(200).json({ message: "Updating a user successfully" ,user});
