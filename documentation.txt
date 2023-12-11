@@ -31,6 +31,7 @@
 #Order Apis:
 -AddOrder: http://localhost:5000/orders/add (post)
 -GetAll : http://localhost:5000/orders/getAll (get)
+-getOrdersByDate : http://localhost:5000/orders/getOrdersByDate (get)
 -GetOrderById: http://localhost:5000/orders/getOrderById/:Id (get)
 -DeleteOrder: http://localhost:5000/orders/deleteOrder/:Id (delete)
 -UpdateStatus: http://localhost:5000/orders/updateStatus/:Id (put)
