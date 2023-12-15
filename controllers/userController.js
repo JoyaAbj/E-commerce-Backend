@@ -13,14 +13,12 @@ const register = async (req, res) => {
 
         const existEmail = await Users.findOne({ email });
         if (existEmail) throw Error("Email already in use");
-
-        // Check if phoneNumber is provided and not null
+        
         if (!phoneNumber) throw Error("Phone number is required");
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Create a new user with a unique phoneNumber
         const user = await Users.create({
             fullName,
             email,
@@ -28,8 +26,6 @@ const register = async (req, res) => {
             phoneNumber,
             role
         });
-
-        if (!user) throw Error("An error occurred during user creation");
 
         const token = generateToken(user._id, role);
         res.status(200).json({ message: "User added successfully", token });
@@ -84,12 +80,12 @@ const deleteUser = async (req, res) => {
     }
 }
 const updateUser = async (req, res) => {
-    const { fullName, ph, email } = req.body;
+    const { fullName, phoneNumber, email } = req.body;
     const { Id } = req.params
     try {
-        if (!fullName || !ph || !email) throw Error('All fields must be filled');
+        if (!fullName || !phoneNumber || !email) throw Error('All fields must be filled');
         if (!Id) throw Error("No id sent as parameter");
-        const resultat = await Users.findByIdAndUpdate({ _id:Id }, { fullName, ph, email });
+        const resultat = await Users.findByIdAndUpdate({ _id:Id }, { fullName, phoneNumber, email });
         if(!resultat)throw Error("Error while updating");
         const user=await getUserById(Id);
         res.status(200).json({ message: "Updating a user successfully" ,user});
