@@ -1,4 +1,5 @@
 const Order = require("../models/orderModel");
+const Cars = require("../models/carsModel");
 // userId cars shipmentId status
 const add = async (req, res) => {
   const { userId, cars, shipmentId, status } = req.body;
@@ -93,6 +94,41 @@ const getOrderById = async(Id)=>{
     return error;
   }
 }
-
-
-module.exports = { add, getAll, findByUserId, updateOrderToDoneById , updateOrderById, deleteOrder};
+const getNOrdersByMonth = async(req,res)=>{
+  try {
+    const d=new Date().getFullYear();
+    const orders=await Order.find({status:true}).select(['updatedAt','cars']).sort({ 'updatedAt': -1 });
+  const orderData=[];
+  orders.forEach ((order)=>{
+    const m=new Date(order.updatedAt).getMonth();
+    const y=new Date(order.updatedAt).getFullYear();
+    const obj={
+      month:m,
+      year:y,
+      order:order.cars
+    };
+    orderData.push(obj);
+  });
+  res.status(200).json({message:'Orders selected with date successfully',orderData});
+  }catch (error) {
+    res.status(500).json({message:"Failed to fetch orders broup by the date",error:error.message})
+  }
+}
+const selectingOrderData=async(req,res)=>{
+  try{
+   const orders=await Order.find({})
+  .populate({
+    path: 'userId',
+    model: 'users',
+    select: 'fullName phoneNumber email role'
+  }).populate({
+    path: 'cars',
+    model: 'cars',
+    select: 'carName company type description initialPrice sellingPrice TVA discount quantity files DOR color'
+  });
+      res.status(200).json({orders});
+  }catch(error){
+     res.status(500).json({message:"Failed to select order data",error:error.message})
+  }
+}
+module.exports = { selectingOrderData,add,getNOrdersByMonth, getAll, findByUserId, updateOrderToDoneById , updateOrderById, deleteOrder};

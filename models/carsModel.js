@@ -11,8 +11,8 @@ const carsSchema = new mongoose.Schema({
   TVA:{type:Number, required:true},
   discount:{type: Number},
   quantity:{type: Number,required:true},
-  files:{type:Array,required:true}, // it could also be of type:String , Both cases tested
-  DOR:{type:Date,required:true},
+  file:{type:Array,required:true}, // it could also be of type:String , Both cases tested
+  DOR:{type:String,required:true},
   color:{type:String, required:true}
 },{ timestamps: true });
 
