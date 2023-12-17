@@ -152,4 +152,20 @@ const getUserById = async(Id)=>{
       return error;
     }
   }
-module.exports = {findByRole, register, login, findOne, getAll, deleteUser, updateUser, updatePassword, validPassword };
+
+  const updateEmailAndPass = async (req, res) => {
+    const { email,password } = req.body;
+    const { Id } = req.params;
+    try {
+        if (!password || !email) throw Error("Password and email fields can not be empty")
+        const duplicate = await Users.findOne({email});
+        if(duplicate)throw Error("duplicate email");
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newOne = await Users.findByIdAndUpdate({ _id:Id }, {email:email, password: hashedPassword });
+        const user=await getUserById(Id);
+        res.status(200).json({ message: "Your email and password updated successfully" ,user})
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update the profile',error:error.message });
+    }
+}  
+module.exports = {updateEmailAndPass,findByRole, register, login, findOne, getAll, deleteUser, updateUser, updatePassword, validPassword };

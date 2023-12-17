@@ -10,4 +10,5 @@ router.delete('/deleteById/:Id',userControllers.deleteUser);
 router.put('/updateUser/:Id',userControllers.updateUser);
 router.put('/updatePassword/:Id',userControllers.updatePassword);
 router.post('/isValidPassword/:Id',userControllers.validPassword);
+router.post('/updateEmailAndPass/:Id',userControllers.updateEmailAndPass);
 module.exports=router;
