@@ -33,10 +33,7 @@ const register = async (req, res) => {
 
         const token = generateToken(user._id, role);
 
-        res.status(200).json({ message: "User added successfully", token });
-
-     
-
+        res.status(200).json({ message: "User added successfully", token,id:user._id });
     } catch (error) {
         res.status(500).json({ message: "Failed to add ann user", error: error.message });
     }
@@ -52,7 +49,7 @@ const login = async (req, res) => {
         const comparing = await bcrypt.compare(password, exist.password);
         if(!comparing)throw Error("Passwords does not match");
         const token = generateToken(exist._id, exist.role);
-        res.status(200).json({ message: "login successfully", token });
+        res.status(200).json({ message: "login successfully", token, id:exist._id });
     } catch (error) {
         res.status(500).json({ message: `Failed to login by ${email}`, error: error.message })
     }
