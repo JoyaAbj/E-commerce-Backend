@@ -234,18 +234,14 @@ const updateCar = async (req, res) => {
     color,
   } = req.body;
   const { Id } = req.params;
-  
+
   try {
     const car = await getACarById(Id);
-    const fileUploads = await Promise.all(req.files.map(file => FileUpload(file)));
-    const files = fileUploads.map(upload => upload.downloadURL);
- 
-  
-    //if (car.files !== files) {
-    // const fileUploads = await FileUpload(req.files); 
-     //files = fileUploads.map(upload => upload.downloadURL);
-   // }
-  
+    
+    
+    const fileUploads = req.files ? await Promise.all(req.files.map(file => FileUpload(file))) : [];
+    const files = fileUploads.length > 0 ? fileUploads.map(upload => upload.downloadURL) : car.files;
+
     const updatedCar = await Cars.findByIdAndUpdate(
       { _id: Id },
       {
@@ -263,14 +259,15 @@ const updateCar = async (req, res) => {
         color,
       }
     );
-  
-    res.status(200).json({ message: "car updated successfully", car: updatedCar });
+
+    res.status(200).json({ message: "Car updated successfully", car: updatedCar });
   } catch (error) {
     res
       .status(500)
       .json({ message: "Failed to update car", error: error.message });
   }
-  };
+};
+
 
 
 const deleteCar = async (req, res) => {
