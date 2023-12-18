@@ -7,18 +7,18 @@ const hashCredential =async(credential)=>{
 
 
 const addCardInfo = async (req, res) => {
-  const { userId,nameOnCard, cardNumber, cvv, expDate } = req.body;
+  const { userId,nameOnCard, cardNumber, cvc, expDate } = req.body;
   try {
-    if (!userId || !location || !nameOnCard || !cardNumber || !cvv || !expDate)
+    if (!userId || !nameOnCard || !cardNumber || !cvc || !expDate)
       throw Error("All fields must be filled");
-    const hashednameOnCard=hashCredential(nameOnCard);
-    const hashedcardNumber=hashCredential(cardNumber);
-    const hashedcvv=hashCredential(cvv);  
+    const hashednameOnCard=await bcrypt.hash(nameOnCard , 10);
+    const hashedcardNumber=await bcrypt.hash(cardNumber , 10);
+    const hashedcvc=await bcrypt.hash(cvc , 10);  
     const card = await UserInfo.create({
       userId,
-      hashednameOnCard,
-      hashedcardNumber,
-      hashedcvv,
+      nameOnCard:hashednameOnCard,
+      cardNumber:hashedcardNumber,
+      cvc:hashedcvc,
       expDate,
     });
     if (!card) throw Error("error while adding card info");

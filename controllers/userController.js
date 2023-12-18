@@ -29,7 +29,7 @@ const register = async (req, res) => {
 
         const token = generateToken(user._id, role);
 
-        res.status(200).json({ message: "User added successfully", token,id:user._id });
+        res.status(200).json({ message: "User added successfully",user,token,id:user._id });
     } catch (error) {
         res.status(500).json({ message: "Failed to add ann user", error: error.message });
     }
