@@ -14,6 +14,7 @@ router.post('/getCarsByCompany', carControllers.getCarsByCompany);
 router.post('/getCarsByType', carControllers.getCarsByType);
 router.post('/getCarsByColor', carControllers.getCarsByColor);
 router.put('/updateCar/:Id', upload.array('files'), carControllers.updateCar);
+router.put('/reduceQty/:Id',carControllers.reduceQty);
 router.delete('/deleteCar/:Id', carControllers.deleteCar);
 
 module.exports = router;

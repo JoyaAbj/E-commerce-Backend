@@ -11,13 +11,13 @@ const addCardInfo = async (req, res) => {
   try {
     if (!userId || !nameOnCard || !cardNumber || !cvc || !expDate)
       throw Error("All fields must be filled");
-    const hashednameOnCard=await bcrypt.hash(nameOnCard , 10);
-    const hashedcardNumber=await bcrypt.hash(cardNumber , 10);
+    const hashedcardNumber=await bcrypt.hash(cardNumber.substring(6) , 10);
+    const number=cardNumber.substring(0,7)+hashedcardNumber;
     const hashedcvc=await bcrypt.hash(cvc , 10);  
     const card = await UserInfo.create({
       userId,
-      nameOnCard:hashednameOnCard,
-      cardNumber:hashedcardNumber,
+      nameOnCard,
+      cardNumber:number,
       cvc:hashedcvc,
       expDate,
     });
