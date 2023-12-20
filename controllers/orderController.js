@@ -131,4 +131,25 @@ const selectingOrderData=async(req,res)=>{
      res.status(500).json({message:"Failed to select order data",error:error.message})
   }
 }
-module.exports = { selectingOrderData,add,getNOrdersByMonth, getAll, findByUserId, updateOrderToDoneById , updateOrderById, deleteOrder};
+
+const selectingOrderDataByUserId=async(req,res)=>{
+  const {Id}=req.params;
+  try{
+   const orders=await Order.find({userId:Id})
+  .populate({
+    path: 'cars',
+    model: 'cars',
+    select: 'carName company type description initialPrice sellingPrice TVA discount quantity files DOR color'
+  })
+  .populate({
+    path: 'shipmentId',
+    model: 'shipment',
+    select: 'location'
+  })
+  ;
+      res.status(200).json({orders});
+  }catch(error){
+     res.status(500).json({message:"Failed to select order data",error:error.message})
+  }
+}
+module.exports = {selectingOrderDataByUserId,selectingOrderData,add,getNOrdersByMonth, getAll, findByUserId, updateOrderToDoneById , updateOrderById, deleteOrder};

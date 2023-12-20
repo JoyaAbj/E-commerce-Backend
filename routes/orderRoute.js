@@ -5,8 +5,10 @@ router.get('/getAll',orderControllers.getAll);
 router.get('/getOrdersByDate',orderControllers.getNOrdersByMonth);
 router.get('/getOrderById/:Id',orderControllers.findByUserId);
 router.get('/getOrders',orderControllers.selectingOrderData);
+router.get('/getOrdersByUserId/:Id',orderControllers.selectingOrderDataByUserId);
 router.post('/add',orderControllers.add);
 router.put('/updateStatus/:Id',orderControllers.updateOrderToDoneById);
-router.put('/updateOrder/:Id',orderControllers.updateOrderById);
+router.put('/updateStatus/:Id',orderControllers.updateOrderToDoneById);
 router.delete('/deleteOrder/:Id',orderControllers.deleteOrder);
+
 module.exports=router;

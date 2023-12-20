@@ -297,7 +297,24 @@ const getAllCarsBySelector = async (req, res) => {
       });
   }
 };
+
+const reduceQty = async (req, res) => {
+  const { Id } = req.params;
+  try {
+    const old = await Cars.findOne({_id:Id});
+    const car = await Cars.findByIdAndUpdate({_id:Id},{quantity:old.quantity-1});
+    res.status(200).json({ message: "cars retrieved successfully", car });
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        message: "cars not retrieved successfully",
+        error: error.message,
+      });
+  }
+};
 module.exports = {
+  reduceQty,
   getAllCarsBySelector,
   addCar,
   getCarById,
