@@ -60,7 +60,7 @@ const sendAfter = async (req, res) => {
         from: 'DriveEpic',
         to: `${email}`,
         subject: `Dear ${name}`,
-        text: `Hello, your order arrived and thank you for your purchase.`
+        text: `Hello, your order arrived and thank you for your purchase.Click the following link to confirm that you received your order: https://leetcode.com/hadimortada1245/`
     }
     transporter.sendMail(options, (error, info) => {
         if (error) console.log(error);
