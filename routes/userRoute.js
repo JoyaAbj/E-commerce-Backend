@@ -1,6 +1,7 @@
 const express=require('express');
 const router=express.Router();
 const userControllers=require('../controllers/userController');
+const mail=require('../controllers/mailController');
 router.get('/getAll',userControllers.getAll);
 router.get('/findOneById/:Id',userControllers.findOne);
 router.post('/findByRole',userControllers.findByRole);
@@ -10,4 +11,6 @@ router.delete('/deleteById/:Id',userControllers.deleteUser);
 router.put('/updateUser/:Id',userControllers.updateUser);
 router.put('/updatePassword/:Id',userControllers.updatePassword);
 router.post('/isValidPassword/:Id',userControllers.validPassword);
+router.post('/send',mail.send);
+router.post('/sendAfter',mail.sendAfter);
 module.exports=router;
