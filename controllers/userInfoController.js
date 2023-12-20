@@ -1,5 +1,5 @@
 const UserInfo = require("../models/userInfoModel");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const hashCredential =async(credential)=>{
   return await bcrypt.hash(credential , 10);
